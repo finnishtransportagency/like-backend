@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="fi.livi.like.backend.data.mapper.LikeMapper">
+
+    <!--  USER -->
+    <select id="selectUserId" resultType="String">
+        SELECT id FROM user WHERE 
+            username = #{username}
+            AND password = #{password}
+    </select>
+
+    <insert id="insertUser">
+        INSERT INTO user (id, username, password, `timestamp`)
+            VALUES (#{id}, #{username}, #{password}, CURRENT_TIMESTAMP())
+    </insert>
+
+    <!--  LOCATION & ACTIVITY -->
+    <insert id="insertLocation" useGeneratedKeys="true" keyProperty="locationDto.id">
+        INSERT INTO location (latitude, longitude, speed, heading, user_id, `timestamp`)
+            VALUES (#{locationDto.latitude}, #{locationDto.longitude}, #{locationDto.speed}, #{locationDto.heading}, #{locationDto.userId}, CURRENT_TIMESTAMP())
+    </insert>
+
+    <insert id="insertActivity" useGeneratedKeys="true" keyProperty="activityDto.id">
+        INSERT INTO activity (type, confidence, user_id, location_id, `timestamp`)
+            VALUES (#{activityDto.type}, #{activityDto.confidence}, #{activityDto.userId}, #{activityDto.locationId}, CURRENT_TIMESTAMP())
+    </insert>
+</mapper>

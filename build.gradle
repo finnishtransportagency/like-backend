@@ -1,0 +1,113 @@
+buildscript {
+    ext {
+        springBootVersion = '1.3.0.RELEASE'
+    }
+    repositories {
+        maven {url mattersoftNexusUrl}
+        mavenCentral()
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}") 
+    }
+}
+
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'idea'
+apply plugin: 'spring-boot' 
+apply plugin: 'io.spring.dependency-management'
+apply plugin: 'maven-publish'
+apply plugin: 'findbugs'
+apply plugin: 'jacoco'
+
+group = 'fi.livi.like.backend'
+
+jar {
+    baseName = 'likebackend'
+}
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+repositories {
+    maven {url mattersoftNexusUrl}
+    mavenCentral()
+}
+
+dependencies {
+    compile('org.springframework.boot:spring-boot-starter-web')
+    compile('org.springframework.boot:spring-boot-loader')
+    compile('org.apache.commons:commons-lang3:3.4')
+    compile('org.flywaydb:flyway-core')
+    compile('org.mybatis:mybatis:3.3.1')
+    compile('org.mybatis:mybatis-spring:1.2.5')
+    compile('org.springframework:spring-jdbc:4.2.5.RELEASE')
+    compile('org.mariadb.jdbc:mariadb-java-client:1.3.3')
+    compile('com.mchange:c3p0:0.9.5.2')
+    compile('org.springframework.boot:spring-boot-actuator')
+    compile('com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.4.0')
+       
+    testCompile('org.springframework.boot:spring-boot-starter-test') 
+}
+
+configurations {
+    integrationTestCompile.extendsFrom testCompile
+    integrationTestRuntime.extendsFrom testRuntime
+}
+
+eclipse {
+    classpath {
+         containers.remove('org.eclipse.jdt.launching.JRE_CONTAINER')
+         containers 'org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8'
+    }
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '2.7'
+}
+
+findbugs {
+    toolVersion = "3.0.1"
+    effort = "max"
+    reportLevel = "low"
+    ignoreFailures = true
+    excludeFilter = file("$rootProject.projectDir/findbugs-exclude-filter.xml")
+}
+
+jacoco {
+    toolVersion = "0.7.5.201505241946"
+}
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            artifactId 'tracking'
+            from components.java
+
+            /*
+            * This needed because we are using spring-boot plugin
+            */
+            pom.withXml {
+                asNode().appendNode('parent')
+                        .appendNode('groupId', 'org.springframework.boot').parent()
+                        .appendNode('artifactId', 'spring-boot-starter-parent').parent()
+                        .appendNode('version', springBootVersion)
+
+                asNode().appendNode('repositories').appendNode('repository')
+                        .appendNode('id', 'spring-releases').parent()
+                        .appendNode('url', 'http://repo.spring.io/libs-release')
+            }
+        }
+    }
+}
+
+publishing {
+    repositories {
+        maven {
+            url mattersoftNexusReleasesUrl
+            credentials {
+                username mattersoftNexusUsername
+                password mattersoftNexusPassword
+            }
+        }
+    }
+}

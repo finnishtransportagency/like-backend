@@ -1,0 +1,44 @@
+<configuration>
+
+    <property name="applicationName" value="likebackend"/>
+
+    <!-- Enable setting log levels with JMX -->
+    <jmxConfigurator />
+
+    <!-- Copied C:/Users/hpe/.gradle/caches/modules-2/files-2.1/org.springframework.boot/spring-boot/1.3.2.RELEASE/62d0b690a08be593bb0288e0ec93f5bda52be6a/spring-boot-1.3.2.RELEASE.jar!/org/springframework/boot/logging/logback/defaults.xml -->
+    <conversionRule conversionWord="clr" converterClass="org.springframework.boot.logging.logback.ColorConverter" />
+    <conversionRule conversionWord="wex" converterClass="org.springframework.boot.logging.logback.WhitespaceThrowableProxyConverter" />
+    <conversionRule conversionWord="wEx" converterClass="org.springframework.boot.logging.logback.ExtendedWhitespaceThrowableProxyConverter" />
+
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <!-- Copied from org.springframework.boot.logging.logback.DefaultLogbackConfiguration.CONSOLE_LOG_PATTERN -->
+            <pattern>%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){faint} %clr(%5p) %clr(9312){magenta} %clr(---){faint} %clr([%15.15t]){faint} %clr(%-40.40logger{39}){cyan} %clr(:){faint} %m%n%wEx</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+
+        <file>logs/${applicationName}.log</file>
+
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- daily rollover -->
+            <fileNamePattern>logs/${applicationName}.%d{yyyy-MM-dd}.gz</fileNamePattern>
+
+            <!-- keep 15 days' worth of history -->
+            <maxHistory>15</maxHistory>
+        </rollingPolicy>
+
+        <encoder>
+            <!-- Copied from CONSOLE-appender but without colors and such that do not render properly in a file -->
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %5p 9312 --- [%15.15t] %-40.40logger{39} : %m%n%xEx</pattern>
+        </encoder>
+
+    </appender>
+
+    <root level="${root-level:-INFO}">
+        <appender-ref ref="CONSOLE"/>
+        <appender-ref ref="FILE"/>
+    </root>
+
+</configuration>
