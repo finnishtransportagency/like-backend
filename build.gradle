@@ -3,7 +3,6 @@ buildscript {
         springBootVersion = '1.3.0.RELEASE'
     }
     repositories {
-        maven {url mattersoftNexusUrl}
         mavenCentral()
     }
     dependencies {
@@ -29,7 +28,6 @@ sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 repositories {
-    maven {url mattersoftNexusUrl}
     mavenCentral()
 }
 
@@ -75,39 +73,4 @@ findbugs {
 
 jacoco {
     toolVersion = "0.7.5.201505241946"
-}
-
-publishing {
-    publications {
-        maven(MavenPublication) {
-            artifactId 'tracking'
-            from components.java
-
-            /*
-            * This needed because we are using spring-boot plugin
-            */
-            pom.withXml {
-                asNode().appendNode('parent')
-                        .appendNode('groupId', 'org.springframework.boot').parent()
-                        .appendNode('artifactId', 'spring-boot-starter-parent').parent()
-                        .appendNode('version', springBootVersion)
-
-                asNode().appendNode('repositories').appendNode('repository')
-                        .appendNode('id', 'spring-releases').parent()
-                        .appendNode('url', 'http://repo.spring.io/libs-release')
-            }
-        }
-    }
-}
-
-publishing {
-    repositories {
-        maven {
-            url mattersoftNexusReleasesUrl
-            credentials {
-                username mattersoftNexusUsername
-                password mattersoftNexusPassword
-            }
-        }
-    }
 }

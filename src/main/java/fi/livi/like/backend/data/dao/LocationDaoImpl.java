@@ -3,7 +3,6 @@ package fi.livi.like.backend.data.dao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import fi.livi.like.backend.data.dto.ActivityDto;
 import fi.livi.like.backend.data.dto.LocationDto;
 import fi.livi.like.backend.data.mapper.LikeMapper;
 
@@ -18,13 +17,7 @@ public class LocationDaoImpl implements LocationDao {
     }
 
     @Override
-    public LocationDto addLocation(LocationDto location) {
+    public void addLocation(LocationDto location) {
         mapper.insertLocation(location);
-        return location;
-    }
-    
-    @Override
-    public void addActivity(ActivityDto activity) {
-        mapper.insertActivity(activity);
     }
 }

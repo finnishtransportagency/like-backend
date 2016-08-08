@@ -24,6 +24,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.jdbc.JdbcTestUtils;
 import org.springframework.web.client.RestTemplate;
 
+import fi.livi.like.backend.data.HashUtils;
 import fi.livi.like.backend.domain.User;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -42,29 +43,37 @@ public class TestUser {
     DataSource dataSource;
 
     @Test
-    @Sql(scripts = {"/getuser.sql"}, config = @SqlConfig(encoding = "UTF-8"))
+    @Sql(scripts = {"/getnewuser.sql"}, config = @SqlConfig(encoding = "UTF-8"))
     public void GetNewUser() {
+        Assert.assertEquals(0, JdbcTestUtils.countRowsInTable(new JdbcTemplate(dataSource), "user"));
+
         RestTemplate restTemplate = new TestRestTemplate();
 
-        HttpEntity<User> request = new HttpEntity<>(new User(null, "username", "password"));
+        String username = "username";
+        String password = "password";
+        HttpEntity<User> request = new HttpEntity<>(new User(null, username, password));
         ResponseEntity<User> response = restTemplate.exchange(BASE_URL+serverPort+CONTEXT+"getuser", HttpMethod.POST, request, User.class);
-        Assert.assertEquals(response.getStatusCode(), HttpStatus.OK);
+        Assert.assertEquals(HttpStatus.OK, response.getStatusCode());
         Assert.assertEquals(MediaType.APPLICATION_JSON_UTF8_VALUE.toString(), response.getHeaders().getContentType().toString());
         User user = response.getBody();
 
         Assert.assertEquals(1, JdbcTestUtils.countRowsInTable(new JdbcTemplate(dataSource), "user"));
 
-        Assert.assertEquals("userid", user.getId());
-        Assert.assertEquals("username", user.getUsername());
-        Assert.assertEquals("password", user.getPassword());
+        Assert.assertEquals("249ba36000029bbe97499c03db5a9001f6b734ec5baa61e4c9b93f3f0682250b6cf8331b7ee68fd8", user.getId());
+        Assert.assertEquals(HashUtils.encryptString(username), user.getUsername());
+        Assert.assertEquals(HashUtils.encryptString(password), user.getPassword());
     }
-
+    
     @Test
     @Sql(scripts = {"/getexistinguser.sql"}, config = @SqlConfig(encoding = "UTF-8"))
     public void GetExistingUser() {
+        Assert.assertEquals(1, JdbcTestUtils.countRowsInTable(new JdbcTemplate(dataSource), "user"));
+
         RestTemplate restTemplate = new TestRestTemplate();
 
-        HttpEntity<User> request = new HttpEntity<>(new User(null, "username", "password"));
+        String username = "username";
+        String password = "password";
+        HttpEntity<User> request = new HttpEntity<>(new User(null, username, password));
         ResponseEntity<User> response = restTemplate.exchange(BASE_URL+serverPort+CONTEXT+"getuser", HttpMethod.POST, request, User.class);
         Assert.assertEquals(response.getStatusCode(), HttpStatus.OK);
         Assert.assertEquals(MediaType.APPLICATION_JSON_UTF8_VALUE.toString(), response.getHeaders().getContentType().toString());
@@ -72,8 +81,8 @@ public class TestUser {
 
         Assert.assertEquals(1, JdbcTestUtils.countRowsInTable(new JdbcTemplate(dataSource), "user"));
 
-        Assert.assertEquals("usernamepassword", user.getId());
-        Assert.assertEquals("username", user.getUsername());
-        Assert.assertEquals("password", user.getPassword());
+        Assert.assertEquals(HashUtils.encryptString(username) + HashUtils.encryptString(password), user.getId());
+        Assert.assertEquals(HashUtils.encryptString(username), user.getUsername());
+        Assert.assertEquals(HashUtils.encryptString(password), user.getPassword());
     }
 }

@@ -4,10 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import fi.livi.like.backend.data.dao.LocationDao;
-import fi.livi.like.backend.data.dto.ActivityDto;
 import fi.livi.like.backend.data.dto.LocationDto;
-import fi.livi.like.backend.domain.Activity;
-import fi.livi.like.backend.domain.Location;
+import fi.livi.like.backend.domain.JourneyUpdate;
 
 @Component
 public class DataRepository {
@@ -19,15 +17,10 @@ public class DataRepository {
         this.locationDao = locationDao;
     }
     
-    public void addLocations(Location[] locations) {
-        for (Location location : locations) {
-            LocationDto locationDto = LocationDtoFactory.getLocationDto(location);
-            locationDto = locationDao.addLocation(locationDto);
-            Activity activity = location.getActivity();
-            if (activity != null) {
-                ActivityDto activityDto = ActivityDtoFactory.getActivityDto(activity, locationDto);
-                locationDao.addActivity(activityDto);
-            }
+    public void addJourneyUpdates(JourneyUpdate[] journeyUpdates) {
+        for (JourneyUpdate journeyUpdate : journeyUpdates) {
+            LocationDto locationDto = LocationDtoFactory.getLocationDto(journeyUpdate);
+            locationDao.addLocation(locationDto);
         }
     }
 }

@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import fi.livi.like.backend.data.DataRepository;
 import fi.livi.like.backend.data.UserRepository;
-import fi.livi.like.backend.domain.Location;
+import fi.livi.like.backend.domain.JourneyUpdate;
 import fi.livi.like.backend.domain.User;
 
 @RestController
@@ -22,10 +22,10 @@ public class LikeController {
     @Autowired
     private DataRepository dataRepository;
     
-    @RequestMapping(value = "/locations", method = RequestMethod.POST)
+    @RequestMapping(value = "/journeyupdates", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
-    public void addLocations(@RequestBody Location[] locations) {
-        dataRepository.addLocations(locations);
+    public void addJourneyUpdates(@RequestBody JourneyUpdate[] updates) {
+        dataRepository.addJourneyUpdates(updates);
     }
     
     @RequestMapping(value="/getuser", method=RequestMethod.POST, produces = "application/json")

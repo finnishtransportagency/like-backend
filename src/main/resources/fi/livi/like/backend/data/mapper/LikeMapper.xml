@@ -17,12 +17,11 @@
 
     <!--  LOCATION & ACTIVITY -->
     <insert id="insertLocation" useGeneratedKeys="true" keyProperty="locationDto.id">
-        INSERT INTO location (latitude, longitude, speed, heading, user_id, `timestamp`)
-            VALUES (#{locationDto.latitude}, #{locationDto.longitude}, #{locationDto.speed}, #{locationDto.heading}, #{locationDto.userId}, CURRENT_TIMESTAMP())
-    </insert>
-
-    <insert id="insertActivity" useGeneratedKeys="true" keyProperty="activityDto.id">
-        INSERT INTO activity (type, confidence, user_id, location_id, `timestamp`)
-            VALUES (#{activityDto.type}, #{activityDto.confidence}, #{activityDto.userId}, #{activityDto.locationId}, CURRENT_TIMESTAMP())
+        INSERT INTO location (journey_id, sub_journey_id, latitude, longitude, speed, heading, 
+                activity_type, activity_confidence,
+                user_id, `timestamp`)
+            VALUES (#{locationDto.journeyId}, #{locationDto.subJourneyId}, #{locationDto.latitude}, #{locationDto.longitude}, #{locationDto.speed}, #{locationDto.heading},
+                #{locationDto.activityType}, #{locationDto.activityConfidence},
+                #{locationDto.userId}, #{locationDto.timestamp})
     </insert>
 </mapper>

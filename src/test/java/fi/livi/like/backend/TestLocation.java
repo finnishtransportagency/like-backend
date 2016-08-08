@@ -1,7 +1,7 @@
 package fi.livi.like.backend;
 
 
-import java.time.LocalDateTime;
+import java.util.Date;
 
 import javax.sql.DataSource;
 
@@ -25,8 +25,9 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.jdbc.JdbcTestUtils;
 import org.springframework.web.client.RestTemplate;
 
-import fi.livi.like.backend.domain.Activity;
-import fi.livi.like.backend.domain.Location;
+import fi.livi.like.backend.domain.JourneyUpdate;
+import fi.livi.like.backend.domain.LikeActivity;
+import fi.livi.like.backend.domain.LikeLocation;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(LikeApplication.class)
@@ -49,12 +50,11 @@ public class TestLocation {
         
         RestTemplate restTemplate = new TestRestTemplate();
 
-        HttpEntity<Location[]> request = new HttpEntity<>(new Location[]{new Location(60.0, 23.1, 200, 32, LocalDateTime.now(), "userid", null)});
-        ResponseEntity<Location[]> response = restTemplate.exchange(BASE_URL+serverPort+CONTEXT+"locations", HttpMethod.POST, request, Location[].class);
+        HttpEntity<JourneyUpdate[]> request = new HttpEntity<>(new JourneyUpdate[]{new JourneyUpdate("userid", 123, 123, new Date(), new LikeLocation(60.0, 23.1, 200, 32), null)});
+        ResponseEntity<JourneyUpdate[]> response = restTemplate.exchange(BASE_URL+serverPort+CONTEXT+"journeyupdates", HttpMethod.POST, request, JourneyUpdate[].class);
         Assert.assertEquals(HttpStatus.CREATED, response.getStatusCode());
 
         Assert.assertEquals(1, JdbcTestUtils.countRowsInTable(new JdbcTemplate(dataSource), "location"));
-        Assert.assertEquals(0, JdbcTestUtils.countRowsInTable(new JdbcTemplate(dataSource), "activity"));
     }
 
     @Test
@@ -63,14 +63,13 @@ public class TestLocation {
         
         RestTemplate restTemplate = new TestRestTemplate();
 
-        HttpEntity<Location[]> request = new HttpEntity<>(new Location[]{
-                new Location(60.0, 23.1, 200, 32, LocalDateTime.now(), "userid", new Activity("WALKING", 90)),
-                new Location(60.1, 23.2, 202, 34, LocalDateTime.now(), "userid", new Activity("DRIVING", 10)),
+        HttpEntity<JourneyUpdate[]> request = new HttpEntity<>(new JourneyUpdate[]{
+                new JourneyUpdate("userid", 124, 123, new Date(), new LikeLocation(60.0, 23.1, 200, 32), new LikeActivity(LikeActivity.Type.WALKING, 90)),
+                new JourneyUpdate("userid", 124, 124, new Date(), new LikeLocation(60.1, 23.2, 202, 34), new LikeActivity(LikeActivity.Type.IN_VEHICLE, 10)),
             });
-        ResponseEntity<Location[]> response = restTemplate.exchange(BASE_URL+serverPort+CONTEXT+"locations", HttpMethod.POST, request, Location[].class);
+        ResponseEntity<JourneyUpdate[]> response = restTemplate.exchange(BASE_URL+serverPort+CONTEXT+"journeyupdates", HttpMethod.POST, request, JourneyUpdate[].class);
         Assert.assertEquals(HttpStatus.CREATED, response.getStatusCode());
 
         Assert.assertEquals(2, JdbcTestUtils.countRowsInTable(new JdbcTemplate(dataSource), "location"));
-        Assert.assertEquals(2, JdbcTestUtils.countRowsInTable(new JdbcTemplate(dataSource), "activity"));
     }
 }

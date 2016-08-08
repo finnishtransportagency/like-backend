@@ -6,13 +6,4 @@
         <setting name="mapUnderscoreToCamelCase" value="true"/>
         <setting name="defaultExecutorType" value="REUSE"/>
     </settings>
-
-    <typeAliases>
-        <typeAlias alias="LocalDateTime" type="java.time.LocalDateTime" />
-    </typeAliases>
-
-    <typeHandlers>
-        <typeHandler handler="fi.livi.like.backend.data.mapper.LocalDateTimeTypeHandler"/>
-    </typeHandlers>
-
 </configuration>

@@ -1,16 +1,21 @@
 package fi.livi.like.backend.data.dto;
 
-import java.time.LocalDateTime;
+import java.util.Date;
+
 
 
 public class LocationDto {
 
     private Long id;
+    private long journeyId;
+    private long subJourneyId;
     private double latitude;
     private double longitude;
     private int heading;
     private int speed;
-    private LocalDateTime timestamp;
+    private String activityType;
+    private Integer activityConfidence;
+    private Date timestamp;
     private String userId;
     
     @SuppressWarnings("unused")
@@ -18,18 +23,32 @@ public class LocationDto {
         // For myBatis
     }
     
-    public LocationDto(Long id, double latitude, double longitude, int heading, int speed, LocalDateTime timestamp, String userId) {
+    public LocationDto(Long id, long journeyId, long subJourneyId, double latitude, double longitude, int heading, int speed, 
+            String activityType, Integer activityConfidence, 
+            Date timestamp, String userId) {
         this.id = id;
+        this.journeyId = journeyId;
+        this.subJourneyId = subJourneyId;
         this.latitude = latitude;
         this.longitude = longitude;
         this.heading = heading;
         this.speed = speed;
+        this.activityType = activityType;
+        this.activityConfidence = activityConfidence;
         this.timestamp = timestamp;
         this.userId = userId;
     }
 
     public Long getId() {
         return id;
+    }
+
+    public long getJourneyId() {
+        return journeyId;
+    }
+
+    public long getSubJourneyId() {
+        return subJourneyId;
     }
 
     public double getLatitude() {
@@ -47,8 +66,16 @@ public class LocationDto {
     public int getSpeed() {
         return speed;
     }
+    
+    public String getActivityType() {
+        return activityType;
+    }
 
-    public LocalDateTime getTimestamp() {
+    public Integer getActivityConfidence() {
+        return activityConfidence;
+    }
+
+    public Date getTimestamp() {
         return timestamp;
     }
 
@@ -60,14 +87,22 @@ public class LocationDto {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
+        result = prime
+                * result
+                + ((activityConfidence == null) ? 0 : activityConfidence
+                        .hashCode());
+        result = prime * result
+                + ((activityType == null) ? 0 : activityType.hashCode());
         result = prime * result + heading;
         result = prime * result + ((id == null) ? 0 : id.hashCode());
+        result = prime * result + (int) (journeyId ^ (journeyId >>> 32));
         long temp;
         temp = Double.doubleToLongBits(latitude);
         result = prime * result + (int) (temp ^ (temp >>> 32));
         temp = Double.doubleToLongBits(longitude);
         result = prime * result + (int) (temp ^ (temp >>> 32));
         result = prime * result + speed;
+        result = prime * result + (int) (subJourneyId ^ (subJourneyId >>> 32));
         result = prime * result
                 + ((timestamp == null) ? 0 : timestamp.hashCode());
         result = prime * result + ((userId == null) ? 0 : userId.hashCode());
@@ -83,12 +118,24 @@ public class LocationDto {
         if (getClass() != obj.getClass())
             return false;
         LocationDto other = (LocationDto) obj;
+        if (activityConfidence == null) {
+            if (other.activityConfidence != null)
+                return false;
+        } else if (!activityConfidence.equals(other.activityConfidence))
+            return false;
+        if (activityType == null) {
+            if (other.activityType != null)
+                return false;
+        } else if (!activityType.equals(other.activityType))
+            return false;
         if (heading != other.heading)
             return false;
         if (id == null) {
             if (other.id != null)
                 return false;
         } else if (!id.equals(other.id))
+            return false;
+        if (journeyId != other.journeyId)
             return false;
         if (Double.doubleToLongBits(latitude) != Double
                 .doubleToLongBits(other.latitude))
@@ -97,6 +144,8 @@ public class LocationDto {
                 .doubleToLongBits(other.longitude))
             return false;
         if (speed != other.speed)
+            return false;
+        if (subJourneyId != other.subJourneyId)
             return false;
         if (timestamp == null) {
             if (other.timestamp != null)
@@ -113,10 +162,12 @@ public class LocationDto {
 
     @Override
     public String toString() {
-        return "LocationDto [id=" + id + ", latitude=" + latitude
+        return "LocationDto [id=" + id + ", journeyId=" + journeyId
+                + ", subJourneyId=" + subJourneyId + ", latitude=" + latitude
                 + ", longitude=" + longitude + ", heading=" + heading
-                + ", speed=" + speed + ", timestamp=" + timestamp + ", userId="
-                + userId + "]";
+                + ", speed=" + speed + ", activityType=" + activityType
+                + ", activityConfidence=" + activityConfidence + ", timestamp="
+                + timestamp + ", userId=" + userId + "]";
     }
-    
+
 }

@@ -9,20 +9,27 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
     "type", 
     "confidence"
     })
-public class Activity {
+public class LikeActivity {
 
-    private String type;
+    private Type type;
     private int confidence;
 
-    public Activity(
-            @JsonProperty("type") String type, 
+    public enum Type {
+        IN_VEHICLE,
+        ON_BICYCLE,
+        RUNNING,
+        WALKING;
+    }
+    
+    public LikeActivity(
+            @JsonProperty("type") Type type, 
             @JsonProperty("confidence") int confidence) {
         this.type = type;
         this.confidence = confidence;
     }
 
     @JsonProperty("type")
-    public String getType() {
+    public Type getType() {
         return type;
     }
 
@@ -48,7 +55,7 @@ public class Activity {
             return false;
         if (getClass() != obj.getClass())
             return false;
-        Activity other = (Activity) obj;
+        LikeActivity other = (LikeActivity) obj;
         if (confidence != other.confidence)
             return false;
         if (type == null) {
